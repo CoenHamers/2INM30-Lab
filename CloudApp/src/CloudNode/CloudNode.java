@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cloudapp;
+package CloudNode;
 
 /**
  *
  * @author Coen
  */
-public class CloudApp {
+public class CloudNode {
 
     /**
      * @param args the command line arguments
