@@ -1,2 +1,6 @@
 /CloudApp/build/
 /CloudApp/dist/
+/CloudClient/nbproject/private/
+/CloudClient/build/
+/CloudScheduler/build/
+/CloudScheduler/dist/
