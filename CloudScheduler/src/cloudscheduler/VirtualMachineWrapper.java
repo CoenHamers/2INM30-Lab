@@ -19,6 +19,8 @@ public class VirtualMachineWrapper {
     int lastKnownCPU = 0;
     int lastKnownMemory = 0;
     String ip = "";
+    String state = "";
+    String id = "";
     
     public int GetCPU()
     {
@@ -30,6 +32,24 @@ public class VirtualMachineWrapper {
     {
         UpdateInfoFields();
         return lastKnownCPU;        
+    }
+    
+    public String GetState()
+    {
+        UpdateInfoFields();
+        return state;
+    }
+    
+    public String GetID()
+    {
+        if("".equals(ip))
+        {
+            OneResponse info = wrappee.info();
+            String idResult = XmlParser.ExtractElement(info.getMessage(), "ID");
+            //<IP><![CDATA[10.141.3.171]]></IP> - there can be better parsing (for variable ip adress lengths)
+            id = idResult;
+        }
+        return ip;        
     }
     
     public String GetIP()
@@ -49,6 +69,12 @@ public class VirtualMachineWrapper {
         wrappee = machineToWrap;
     }
     
+    public void AssignJob(String job)
+    {
+        Log.WriteDebug("Instead of assigning a job, as a place holder we just shut down the VM.");
+        wrappee.shutdown();
+    }
+    
     private void UpdateInfoFields()
     {        
         OneResponse info = wrappee.info();
@@ -57,6 +83,32 @@ public class VirtualMachineWrapper {
         lastKnownCPU = Integer.parseInt(cpu);
         String memory = XmlParser.ExtractElement(xmlResponse, "MEMORY");
         lastKnownCPU = Integer.parseInt(cpu);
+        String stateNumber = XmlParser.ExtractElement(xmlResponse, "STATE");
+        state = StateNumberToString(stateNumber);
+        
+        
+        Log.WriteDebug("Checking State with state(): " + wrappee.state());
+        Log.WriteDebug("Checking State with status(): " + wrappee.status());
+        Log.WriteDebug("Checking State with stateStr(): " + wrappee.stateStr());
     }
     
+    // http://docs.opennebula.org/4.12/integration/system_interfaces/api.html#actions-for-virtual-machine-management
+    private String StateNumberToString(String state)            
+    {
+        switch(state)
+        {
+            case "-2": return "Any";
+            case "-1": return "AnyButDone";
+            case "0": return "Init";
+            case "1": return "Pending";
+            case "2": return "Hold";
+            case "3": return "Active";
+            case "4": return "Stopped";
+            case "5": return "Suspended";
+            case "6": return "Done";
+            case "7": return "Failed";
+            default:  // Not sure what to do here
+                return "Any";
+        }
+    }
 }

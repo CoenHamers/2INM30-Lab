@@ -5,7 +5,11 @@
  */
 package cloudscheduler;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.opennebula.client.Client;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.vm.VirtualMachine;
@@ -17,15 +21,18 @@ import org.opennebula.client.vm.VirtualMachine;
 public class Scheduler {
     
     Client myClient;
+    List<VirtualMachineWrapper> machines;
     
     public Scheduler(Client oneClient)
     {
         myClient = oneClient;
+        machines = new ArrayList<VirtualMachineWrapper>();
     }
     
     public void TestSequence() throws InterruptedException
     {
-        VirtualMachineWrapper vm = CreateNewVirtualMachine();
+        ScheduleJob("");
+        /*VirtualMachineWrapper vm = CreateNewVirtualMachine();
         if(vm != null)
         {
             int cpu = 0 ;
@@ -38,7 +45,27 @@ public class Scheduler {
             }
             
             VirtualMachineWrapper vm2 = CreateNewVirtualMachine();
+        }*/
+    }
+    
+    public void ScheduleJob(String job)
+    {
+        VirtualMachineWrapper vm = CreateNewVirtualMachine();
+        machines.add(vm);
+        boolean vmBootDone = false;
+        
+        while(!vmBootDone)
+        {
+            String vmState = vm.GetState();
+            Log.WriteDebug("Waiting for VM " + vm.GetID() + " to boot, current status " + vmState);
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Scheduler.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
+        
+        vm.AssignJob(job);
     }
     
     private VirtualMachineWrapper CreateNewVirtualMachine()

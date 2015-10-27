@@ -30,11 +30,13 @@ public class CloudScheduler {
         Client oneClient;
         try {
             String url = "http://fs3.das4.tudelft.nl:2633/RPC2";
-            String user = ""; //cld9999
-            String password = ""; //XXXXXXXX
+            String user = args[0]; //cld9999
+            String password = args[1]; //XXXXXXXX
             
-            oneClient = new Client(user+":"+password, url); //tut7WO7e
+            oneClient = new Client(user+":"+password, url);
             Log.WriteInfo("Connected to " + url + " as user " + user);
+            OneResponse version = oneClient.get_version();
+            Log.WriteOneResponse(version);
             
             Log.WriteDebug("Creating Scheduler");
             Scheduler scheduler = new Scheduler(oneClient);
