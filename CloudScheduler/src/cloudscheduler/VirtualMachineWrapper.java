@@ -69,8 +69,9 @@ public class VirtualMachineWrapper {
         wrappee = machineToWrap;
     }
     
-    public void AssignJob(String job)
+    public void AssignJob(Job job)
     {
+        Log.WriteDebug("Received job " + job.GetJobDescription());
         Log.WriteDebug("Instead of assigning a job, as a place holder we just shut down the VM.");
         wrappee.shutdown();
     }

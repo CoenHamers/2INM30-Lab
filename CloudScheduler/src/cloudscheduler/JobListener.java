@@ -10,6 +10,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Enumeration;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,11 +25,28 @@ public class JobListener {
     int port;
     Thread listeningThread;
     volatile boolean stopThread;
+    Vector listeners;
     
     public JobListener(int portToUse)
     {
         port = portToUse;
         stopThread = false;
+        listeners = new Vector();
+    }
+    
+    public void SubscribeOnJobRequests(JobScheduler jobEventProcessor)
+    {
+        listeners.addElement(jobEventProcessor);
+    }
+    
+    public void OnJobRequest(Job jobrequest, User user)
+    {
+        Enumeration e = listeners.elements();
+        while(e.hasMoreElements())
+        {
+            JobScheduler js = (JobScheduler)e.nextElement();
+            js.ScheduleJob(jobrequest, user);
+        }
     }
     
     public void StartListening()
@@ -51,7 +70,15 @@ public class JobListener {
                         BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
                         DataInputStream dis = new DataInputStream(bis);
                         String textline = dis.readUTF();
+                        
+                        Log.WriteDebug("Connected to " + socket.getInetAddress());
                         Log.WriteDebug("Received line: " + textline);
+                        
+                        // TODO: Run this in a separate thread again, so new clients can immediately be responded to
+                        User user = new User(socket.getInetAddress().toString(), "");
+                        Job job = new Job(textline);
+                        OnJobRequest(job, user);
+                        
                         dis.close();
                         bis.close();
                         socket.close();                        

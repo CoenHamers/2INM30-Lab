@@ -49,6 +49,7 @@ public class CloudScheduler {
             Log.WriteDebug("Creating Scheduler");
             Scheduler scheduler = new Scheduler(oneClient);
             JobListener listener = new JobListener(port);
+            listener.SubscribeOnJobRequests(scheduler);
             listener.StartListening();
             
             Log.WriteInfo("Press enter to exit.");

@@ -7,7 +7,9 @@ package cloudscheduler;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opennebula.client.Client;
@@ -15,23 +17,24 @@ import org.opennebula.client.OneResponse;
 import org.opennebula.client.vm.VirtualMachine;
 
 /**
- *
  * @author Pieter
  */
-public class Scheduler {
+public class Scheduler implements JobScheduler {
     
     Client myClient;
     List<VirtualMachineWrapper> machines;
+    Map usersJobs;
     
     public Scheduler(Client oneClient)
     {
         myClient = oneClient;
         machines = new ArrayList<>();
+        usersJobs = new HashMap();
     }
     
     public void TestSequence() throws InterruptedException
     {
-        ScheduleJob("");
+        ScheduleJob(new Job(""), new User("",""));
         /*VirtualMachineWrapper vm = CreateNewVirtualMachine();
         if(vm != null)
         {
@@ -48,8 +51,11 @@ public class Scheduler {
         }*/
     }
     
-    public void ScheduleJob(String job)
+    @Override
+    public void ScheduleJob(Job job, User user)
     {
+        usersJobs.put(user.GetID(), job);
+        
         VirtualMachineWrapper vm = CreateNewVirtualMachine();
         machines.add(vm);
         boolean vmBootDone = false;
