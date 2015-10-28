@@ -33,17 +33,10 @@ public class CloudClient {
     static void server() throws IOException {
         ServerSocket ssocket = new ServerSocket(portnumber);
         Socket socket = ssocket.accept();
-        /*FileOutputStream fos = new FileOutputStream("C:\\Users\\Administrator\\Pictures\\server\\test.jpg");
-         BufferedOutputStream out = new BufferedOutputStream(fos);
-         byte[] buffer = new byte[1024];
-         int count;
-         InputStream in = socket.getInputStream();
-         while ((count = in.read(buffer)) > 0) {
-         fos.write(buffer, 0, count);
-         }
-         fos.close();*/
+        
         BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
         DataInputStream dis = new DataInputStream(bis);
+        
         String textline = dis.readUTF();
         int filesCount = dis.readInt();
         File[] files = new File[filesCount];
@@ -87,15 +80,6 @@ public class CloudClient {
         ir.read();
         ArrayList<File> files = (ArrayList<File>) ir.getFilesinFolder();
 
-        /* int count;
-         byte[] buffer = new byte[1024];
-
-         OutputStream out = socket.getOutputStream();
-         BufferedInputStream in = new BufferedInputStream(new FileInputStream(files.get(0)));
-         while ((count = in.read(buffer)) >= 0) {
-         out.write(buffer, 0, count);
-         out.flush();
-         }*/
         BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
         DataOutputStream dos = new DataOutputStream(bos);
 
