@@ -6,14 +6,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
-import ij.*;
-import ij.gui.*;
-import java.awt.Color;
-import java.awt.Font;
+import javax.swing.Icon;
+import javax.swing.JOptionPane;
+
       
 /**
  *
- * @author Administrator
+ * @author Coen
  */
 public class InputReader {
     
@@ -24,8 +23,16 @@ public class InputReader {
     }
     
     public void read() {
+        String s = (String)JOptionPane.showInputDialog(
+                    null,
+                    "Input the map where the images reside:",
+                    "Customized Dialog",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    null,
+                    "F:\\Documents\\Github\\2INM30-Lab\\Images");
         try {
-        filesInFolder = Files.walk(Paths.get("C:\\Users\\Administrator\\Pictures\\cloudImages"))
+        filesInFolder = Files.walk(Paths.get(s))
                                 .filter(Files::isRegularFile)
                                 .map(Path::toFile)
                                 .collect(Collectors.toList());

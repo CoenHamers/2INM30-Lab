@@ -1,36 +1,26 @@
 package cloudclient;
 
-import ij.IJ;
-import ij.ImagePlus;
-import ij.gui.Overlay;
-import ij.gui.Roi;
-import ij.gui.TextRoi;
-import ij.io.FileSaver;
-import java.awt.Color;
-import java.awt.Font;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /**
  *
- * @author Administrator
+ * @author Coen
  */
 public class CloudClient {
 
     final static private String hostname = "localhost";
     final static private int portnumber = 4444;
-    final static String print = "July 2015, North-Dakotha";
+    static String print = "";
 
-    static void server() throws IOException {
+    /*static void server() throws IOException {
         ServerSocket ssocket = new ServerSocket(portnumber);
         Socket socket = ssocket.accept();
         
@@ -71,7 +61,7 @@ public class CloudClient {
             FileSaver fs = new FileSaver(imp);
             fs.saveAsJpeg("C:\\Users\\Administrator\\Pictures\\server\\Edited\\" + f.getName());
         }
-    }
+    }*/
 
     static void client() throws IOException {
         Socket socket = new Socket(hostname, portnumber);
@@ -80,6 +70,15 @@ public class CloudClient {
         ir.read();
         ArrayList<File> files = (ArrayList<File>) ir.getFilesinFolder();
 
+        print = (String)JOptionPane.showInputDialog(
+                    null,
+                    "Insert caption for the images:",
+                    "Customized Dialog",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    null,
+                    "July 2015, Australia");
+        
         BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
         DataOutputStream dos = new DataOutputStream(bos);
 
@@ -97,7 +96,7 @@ public class CloudClient {
             FileInputStream fis = new FileInputStream(file);
             BufferedInputStream bis = new BufferedInputStream(fis);
 
-            int theByte = 0;
+            int theByte;
             while ((theByte = bis.read()) != -1) {
                 bos.write(theByte);
             }
@@ -112,9 +111,10 @@ public class CloudClient {
 
     /**
      * @param args the command line arguments
+     * @throws java.io.IOException
      */
     public static void main(String[] args) throws IOException {
-        new Thread() {
+       /* new Thread() {
             public void run() {
                 try {
                     server();
@@ -122,7 +122,7 @@ public class CloudClient {
                     e.printStackTrace();
                 }
             }
-        }.start();
+        }.start();*/
 
         client();
     }
