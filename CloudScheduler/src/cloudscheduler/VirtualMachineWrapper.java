@@ -93,6 +93,10 @@ public class VirtualMachineWrapper {
     }
     
     // http://docs.opennebula.org/4.12/integration/system_interfaces/api.html#actions-for-virtual-machine-management
+    // There are multiple methods to request the status of a vm, the methods (with example returnvalue):
+    // state()          3
+    // status()         runn
+    // stateStr()       ACTIVE
     private String StateNumberToString(String state)            
     {
         switch(state)

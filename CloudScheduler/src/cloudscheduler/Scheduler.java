@@ -57,6 +57,7 @@ public class Scheduler {
         while(!vmBootDone)
         {
             String vmState = vm.GetState();
+            vmBootDone = (vmState.equals("Active"));
             Log.WriteDebug("Waiting for VM " + vm.GetID() + " to boot, current status " + vmState);
             try {
                 Thread.sleep(5000);

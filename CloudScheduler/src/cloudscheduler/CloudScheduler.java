@@ -5,6 +5,8 @@
  */
 package cloudscheduler;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opennebula.client.Client;
@@ -13,7 +15,6 @@ import org.opennebula.client.OneResponse;
 import org.opennebula.client.vm.VirtualMachine;
 
 /**
- *
  * @author Administrator
  */
 public class CloudScheduler {
@@ -24,14 +25,21 @@ public class CloudScheduler {
      * @param args the command line arguments
      */
     public static void main(String[] args) {       
+        if(args[0].equals("") || args[0].equals("--help") || args[0].equals("-h"))
+        {
+            PrintArgumentList();
+            return;
+        }
+        
         Log.WriteInfo("This is CloudScheduler, an application developed for 2IMN30"); 
-        Log.WriteInfo("Created by C. Hamers and P. Gijsbers"); 
+        Log.WriteInfo("Created by C. Hamers and P. Gijsbers");         
         
         Client oneClient;
         try {
             String url = "http://fs3.das4.tudelft.nl:2633/RPC2";
             String user = args[0]; //cld9999
             String password = args[1]; //XXXXXXXX
+            int port = Integer.parseInt(args[2]); //XXXXXXXX
             
             oneClient = new Client(user+":"+password, url);
             Log.WriteInfo("Connected to " + url + " as user " + user);
@@ -40,15 +48,14 @@ public class CloudScheduler {
             
             Log.WriteDebug("Creating Scheduler");
             Scheduler scheduler = new Scheduler(oneClient);
+            JobListener listener = new JobListener(port);
+            listener.StartListening();
             
-            Log.WriteDebug("Start Scheduler TestSequence");
+            Log.WriteInfo("Press enter to exit.");
             try {
-                scheduler.TestSequence();
-                
-                //System.out.println("Requesting monitor about VM 40889");
-                //OneResponse vmInfoResponse = VirtualMachine.monitoring(oneClient, 40889);
-                //WriteOneResponse(vmInfoResponse);        
-            } catch (InterruptedException ex) {
+                System.in.read();
+                listener.StopListening();
+            } catch (IOException ex) {
                 Logger.getLogger(CloudScheduler.class.getName()).log(Level.SEVERE, null, ex);
             }
             
@@ -57,5 +64,12 @@ public class CloudScheduler {
         }
     }
     
-   
+   private static void PrintArgumentList()
+   {       
+        System.out.println("Please start this program with the following arguments:");
+        System.out.println("1. Your OpenNebula username (cld9999)");
+        System.out.println("2. Your OpenNebula password (xxxxxxx)");
+        System.out.println("3. The portnumber you want incoming jobrequests to listen to.");
+        System.out.println("   If the portnumber is not specified, 4444 will be used.");
+   }
 }
