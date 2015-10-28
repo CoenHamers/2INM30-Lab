@@ -5,6 +5,9 @@
  */
 package cloudscheduler;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import org.opennebula.client.OneResponse;
 
 /**
@@ -13,69 +16,60 @@ import org.opennebula.client.OneResponse;
  */
 public class Log {
     /*
-    Log Levels:
-    0. Errors only
-    1. Warnings as well
-    2. Info as well
-    3. Debug as well
-    */
+     Log Levels:
+     0. Errors only
+     1. Warnings as well
+     2. Info as well
+     3. Debug as well
+     */
+
     public static int LogLevel = 3;
     public static String LogFile = "";
-    
-    public static void WriteDebug(String str)
-    {
-        if(LogLevel >= 3)
-        {
-            WriteLog("Debug: "+str);   
+
+    public static void WriteDebug(String str) {
+        if (LogLevel >= 3) {
+            WriteLog("Debug: " + str);
         }
     }
-    
-    public static void WriteError(String str)
-    {
-        if(LogLevel >= 0)
-        {
-            WriteLog("Error: "+str);   
+
+    public static void WriteError(String str) {
+        if (LogLevel >= 0) {
+            WriteLog("Error: " + str);
         }
     }
-        
-    public static void WriteWarning(String str)
-    {
-        if(LogLevel >= 1)
-        {
-            WriteLog("Warning: "+str);   
+
+    public static void WriteWarning(String str) {
+        if (LogLevel >= 1) {
+            WriteLog("Warning: " + str);
         }
     }
-            
-    public static void WriteInfo(String str)
-    {
-        if(LogLevel >= 2)
-        {
-            WriteLog("Info: "+str);   
+
+    public static void WriteInfo(String str) {
+        if (LogLevel >= 2) {
+            WriteLog("Info: " + str);
         }
     }
-    
-    public static void WriteOneResponse(OneResponse response)
-    {        
-        if(response.isError())
-        {
-            Log.WriteError(response.getErrorMessage());                
-        }
-        else                
-        {
+
+    public static void WriteOneResponse(OneResponse response) {
+        if (response.isError()) {
+            Log.WriteError(response.getErrorMessage());
+        } else {
             Log.WriteDebug(response.getMessage());
         }
     }
-    
-    private static void WriteLog(String str)
-    {
+
+    private static void WriteLog(String str) {
         // Write to standardout if no file is specified
-        if("".equals(Log.LogFile))
-        {
-            System.out.println(str);             
-        }
-        else            
-        {
-            // Write to file
+        if ("".equals(Log.LogFile)) {
+            System.out.println(str);
+        } else {
+            try {
+                PrintWriter writer = new PrintWriter("error-log", "UTF-8");
+                writer.println(str);
+                writer.close();
+            } catch (FileNotFoundException | UnsupportedEncodingException e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 }

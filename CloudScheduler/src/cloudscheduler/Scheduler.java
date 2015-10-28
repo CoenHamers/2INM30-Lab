@@ -26,7 +26,7 @@ public class Scheduler {
     public Scheduler(Client oneClient)
     {
         myClient = oneClient;
-        machines = new ArrayList<VirtualMachineWrapper>();
+        machines = new ArrayList<>();
     }
     
     public void TestSequence() throws InterruptedException
