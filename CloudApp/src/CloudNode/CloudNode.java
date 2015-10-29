@@ -17,11 +17,11 @@ public class CloudNode {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        File file = new File("Path to file");
-        String caption = "";
+        File file = new File("F:\\Documents\\Github\\2INM30-Lab\\Images\\images");
+        String caption = "Caption";
         
         ImageEditor ie = new ImageEditor(file);
-        ie.addCaptionMultiples(caption);
+        ie.addCaption(caption, 0, 0);
         
     }
     

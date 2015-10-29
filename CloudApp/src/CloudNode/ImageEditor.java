@@ -30,8 +30,7 @@ public class ImageEditor {
      */
     public ImageEditor(File f) {
         file = f;
-        createImageJFile();
-
+       createImageJFile();
     }
 
     /**
@@ -39,7 +38,7 @@ public class ImageEditor {
      * results are saved
      * @param caption to be added in multiple places
      */
-    public void addCaptionMultiples(String caption) {
+    public void addCaptionMultiples(String caption) {        
         for(int i = 0; i < imp.getWidth(); ++i) {
             for(int j = 0; j < imp.getHeight(); ++j) {
                 addCaption(caption, i,j);
@@ -76,7 +75,6 @@ public class ImageEditor {
      * Creates and ImageJfile from the File
      */
     private void createImageJFile() {
-        imp = IJ.openImage(file.getAbsolutePath());
-
+        imp = IJ.openImage(file.getAbsolutePath()+".jpg");
     }
 }
