@@ -4,3 +4,6 @@
 /CloudClient/build/
 /CloudScheduler/build/
 /CloudScheduler/dist/
+CloudClient/nbproject/private/private.properties
+CloudApp/nbproject/private/private.properties
+*.properties

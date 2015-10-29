@@ -21,6 +21,7 @@ public class VirtualMachineWrapper {
     String ip = "";
     String state = "";
     String id = "";
+    boolean shutdown = false;
     
     public int GetCPU()
     {
@@ -71,13 +72,32 @@ public class VirtualMachineWrapper {
     
     public void AssignJob(Job job)
     {
-        Log.WriteDebug("Received job " + job.GetJobDescription());
-        Log.WriteDebug("Instead of assigning a job, as a place holder we just shut down the VM.");
+        if(shutdown)
+        {
+            Log.WriteWarning("Invoked AssignJob on "+id+" which is being shutdown - will not assign job");
+            return;            
+        }
+        
+        Log.WriteDebug(id + "received job " + job.GetJobDescription());
+        //Log.WriteDebug("Instead of assigning a job, as a place holder we just shut down the VM.");
+        //wrappee.shutdown();
+    }
+    
+    public void Shutdown()
+    {        
+        Log.WriteDebug("Shutting down VM " + id);
+        shutdown = true; // prevents other methods from being invoked on the VM while it is no longer active
         wrappee.shutdown();
     }
     
     private void UpdateInfoFields()
     {        
+        if(shutdown)
+        {
+            Log.WriteWarning("Invoked UpdateInfoFields on "+id+" which is being shutdown - will not assign job");
+            return;            
+        }
+        
         OneResponse info = wrappee.info();
         String xmlResponse = info.getMessage();
         String cpu = XmlParser.ExtractElement(xmlResponse, "CPU");
@@ -93,6 +113,11 @@ public class VirtualMachineWrapper {
         Log.WriteDebug("Checking State with stateStr(): " + wrappee.stateStr());
     }
     
+    public String GetMonitorSummary()
+    {
+        UpdateInfoFields();
+        return id + ";" + lastKnownMemory + ";" + lastKnownCPU;
+    }
     // http://docs.opennebula.org/4.12/integration/system_interfaces/api.html#actions-for-virtual-machine-management
     // There are multiple methods to request the status of a vm, the methods (with example returnvalue):
     // state()          3

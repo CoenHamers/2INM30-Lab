@@ -56,6 +56,7 @@ public class CloudScheduler {
             try {
                 System.in.read();
                 listener.StopListening();
+                scheduler.Close();
             } catch (IOException ex) {
                 Logger.getLogger(CloudScheduler.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -70,7 +71,7 @@ public class CloudScheduler {
         System.out.println("Please start this program with the following arguments:");
         System.out.println("1. Your OpenNebula username (cld9999)");
         System.out.println("2. Your OpenNebula password (xxxxxxx)");
-        System.out.println("3. The portnumber you want incoming jobrequests to listen to.");
+        System.out.println("3. The portnumber you want incoming to listen to for jobrequests.");
         System.out.println("   If the portnumber is not specified, 4444 will be used.");
    }
 }
