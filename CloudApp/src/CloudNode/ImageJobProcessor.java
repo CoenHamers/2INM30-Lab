@@ -38,13 +38,15 @@ public class ImageJobProcessor implements JobProcessor{
         
         for (File f : filesToProcess)
         {
-            Log.WriteDebug("Processing image " + f.getAbsolutePath());
-            ImageEditor ie = new ImageEditor(f);
             for(int i = 0; i<job.GetWorkloadFactor(); i++)
-                ie.addCaption(job.GetJobDescription(), i, i);
-            
-            Log.WriteDebug("Saving image");
-            ie.saveImage();
+            {
+                Log.WriteDebug("Processing image " + f.getAbsolutePath());
+                ImageEditor ie = new ImageEditor(f);
+                    ie.addCaption(job.GetJobDescription(), i, i);
+
+                Log.WriteDebug("Saving image");
+                ie.saveImage();
+            }
         }        
         
         Log.WriteDebug("Processed job");

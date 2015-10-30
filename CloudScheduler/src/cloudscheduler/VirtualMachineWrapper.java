@@ -56,14 +56,14 @@ public class VirtualMachineWrapper {
     
     public String GetID()
     {
-        if("".equals(ip))
+        if("".equals(id))
         {
             OneResponse info = wrappee.info();
             String idResult = XmlParser.ExtractElement(info.getMessage(), "ID");
             //<IP><![CDATA[10.141.3.171]]></IP> - there can be better parsing (for variable ip adress lengths)
             id = idResult;
         }
-        return ip;        
+        return id;        
     }
     
     public String GetIP()
