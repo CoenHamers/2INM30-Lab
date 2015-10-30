@@ -5,6 +5,19 @@
  */
 package cloudscheduler;
 
+import WantCloud.Log;
+import WantCloud.Job;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.vm.VirtualMachine;
 
@@ -79,8 +92,50 @@ public class VirtualMachineWrapper {
         }
         
         Log.WriteDebug(id + "received job " + job.GetJobDescription());
-        //Log.WriteDebug("Instead of assigning a job, as a place holder we just shut down the VM.");
-        //wrappee.shutdown();
+        try {
+            //Log.WriteDebug("Instead of assigning a job, as a place holder we just shut down the VM.");
+            //wrappee.shutdown();
+            Log.WriteDebug("Sending job to " +GetIP() +":60606");
+            Socket socket = new Socket(GetIP(), 60606);
+        
+            BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
+            DataOutputStream dos = new DataOutputStream(bos);
+            
+            File[] files = job.GetFiles();
+            
+            dos.writeUTF("assign");
+            dos.flush();
+            dos.writeUTF(job.GetJobDescription());
+            dos.flush();
+            dos.writeUTF(job.GetID().toString());
+            dos.flush();
+            dos.writeInt(job.GetWorkloadFactor());
+            dos.writeInt(files.length);
+
+            for (File file : files) {
+                long length = file.length();
+                dos.writeLong(length);
+
+                String name = file.getName();
+                dos.writeUTF(name);
+
+                FileInputStream fis = new FileInputStream(file);
+                BufferedInputStream bis = new BufferedInputStream(fis);
+            
+                int theByte = 0;
+                while ((theByte = bis.read()) != -1) {
+                    bos.write(theByte);
+                }
+
+                bis.close();
+            }
+
+            dos.close();
+
+            socket.close();
+        } catch (IOException ex) {
+            Logger.getLogger(VirtualMachineWrapper.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void Shutdown()
@@ -106,11 +161,6 @@ public class VirtualMachineWrapper {
         lastKnownCPU = Integer.parseInt(cpu);
         String stateNumber = XmlParser.ExtractElement(xmlResponse, "STATE");
         state = StateNumberToString(stateNumber);
-        
-        
-        Log.WriteDebug("Checking State with state(): " + wrappee.state());
-        Log.WriteDebug("Checking State with status(): " + wrappee.status());
-        Log.WriteDebug("Checking State with stateStr(): " + wrappee.stateStr());
     }
     
     public String GetMonitorSummary()

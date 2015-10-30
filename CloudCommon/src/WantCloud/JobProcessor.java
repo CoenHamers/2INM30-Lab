@@ -3,11 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cloudscheduler;
+package WantCloud;
+
+import WantCloud.User;
+import WantCloud.Job;
 
 /**
  * @author Pieter
  */
-public interface JobScheduler {    
-    public void ScheduleJob(Job job, User user);     
+public interface JobProcessor {    
+    public void ProcessJob(Job job, User user);     
 }

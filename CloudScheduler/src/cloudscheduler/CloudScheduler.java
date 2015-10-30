@@ -5,6 +5,8 @@
  */
 package cloudscheduler;
 
+import WantCloud.Log;
+import WantCloud.JobListener;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.logging.Level;
@@ -19,8 +21,6 @@ import org.opennebula.client.vm.VirtualMachine;
  */
 public class CloudScheduler {
 
-    
-    
     /**
      * @param args the command line arguments
      */

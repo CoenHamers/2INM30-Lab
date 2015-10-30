@@ -7,7 +7,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 
 /**
@@ -63,27 +68,30 @@ public class CloudClient {
         }
     }*/
 
-    static void client() throws IOException {
-        Socket socket = new Socket(hostname, portnumber);
+    static void client(String host, String caption, String folder, int workloadFactor) throws IOException {
 
-        InputReader ir = new InputReader();
-        ir.read();
-        ArrayList<File> files = (ArrayList<File>) ir.getFilesinFolder();
+        //InputReader ir = new InputReader();
+        //ir.read();
+        //ArrayList<File> files = (ArrayList<File>) ir.getFilesinFolder();
 
-        String s = (String)JOptionPane.showInputDialog(
-                    null,
-                    "Insert the caption for the images:",
-                    "Customized Dialog",
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,
-                    null,
-                    "");
+        String s = caption;
+        List<File> files = Files.walk(Paths.get(folder))
+                                .filter(Files::isRegularFile)
+                                .map(Path::toFile)
+                                .collect(Collectors.toList());
         
+        Socket socket = new Socket(host, 60603);
         BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
         DataOutputStream dos = new DataOutputStream(bos);
 
-        dos.writeUTF(print);
+        
+        dos.writeUTF("request");
+        dos.flush();        
+        dos.writeUTF(caption);
+        dos.flush();        
+        dos.writeUTF(""); //no id
         dos.flush();
+        dos.writeInt(workloadFactor);
         dos.writeInt(files.size());
 
         for (File file : files) {
@@ -122,7 +130,21 @@ public class CloudClient {
                 }
             }
         }.start();*/
-
-        client();
+        String hostname = "10.141.3.171";
+        String caption = "DefaultCaption";
+        String folder = "C:\\School\\2IMN30-CC\\GH\\2INM30-Lab\\Images";
+        int workloadFactor = 1;
+        if(args.length > 0)
+        {
+            caption = args[0];
+            folder = args[1];
+            workloadFactor = Integer.parseInt(args[2]);
+            
+            if(args.length >3)
+            {
+                hostname = args[2];
+            }
+        }
+        client(hostname, caption, folder, workloadFactor);
     }
 }

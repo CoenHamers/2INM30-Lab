@@ -7,3 +7,9 @@
 CloudClient/nbproject/private/private.properties
 CloudApp/nbproject/private/private.properties
 *.properties
+CloudApp/nbproject/private/private.xml
+/CloudCommon/nbproject/private/
+CloudApp/nbproject/private/private.xml
+/CloudCommon/build/
+/CloudCommon/dist/
+/CloudClient/dist/

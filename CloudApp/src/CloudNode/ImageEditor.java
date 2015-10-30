@@ -1,5 +1,6 @@
 package CloudNode;
 
+import WantCloud.Log;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.Overlay;
@@ -67,7 +68,9 @@ public class ImageEditor {
      */
     public void saveImage() {
         FileSaver fs = new FileSaver(imp);
-        fs.saveAsJpeg(file.getParent() + imp.getTitle());
+        File filefolder = new File(file.getParent() + "/processed/");
+        filefolder.mkdirs();
+        fs.saveAsJpeg(file.getParent() + "/processed/" + imp.getTitle());
 
     }
 
@@ -75,6 +78,7 @@ public class ImageEditor {
      * Creates and ImageJfile from the File
      */
     private void createImageJFile() {
-        imp = IJ.openImage(file.getAbsolutePath()+".jpg");
+        Log.WriteDebug("openImage()" + file.getAbsolutePath());
+        imp = IJ.openImage(file.getAbsolutePath());
     }
 }

@@ -5,6 +5,10 @@
  */
 package cloudscheduler;
 
+import WantCloud.JobProcessor;
+import WantCloud.User;
+import WantCloud.Log;
+import WantCloud.Job;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -23,7 +27,7 @@ import org.opennebula.client.vm.VirtualMachine;
 /**
  * @author Pieter
  */
-public class Scheduler implements JobScheduler {
+public class Scheduler implements JobProcessor {
     
     Client myClient;
     List<VirtualMachineWrapper> machines;
@@ -88,7 +92,7 @@ public class Scheduler implements JobScheduler {
     
     public void TestSequence() throws InterruptedException
     {
-        ScheduleJob(new Job(""), new User("",""));
+        //ScheduleJob(new Job(""), new User("",""));
         /*VirtualMachineWrapper vm = CreateNewVirtualMachine();
         if(vm != null)
         {
@@ -106,9 +110,22 @@ public class Scheduler implements JobScheduler {
     }
     
     @Override
-    public void ScheduleJob(Job job, User user)
+    public void ProcessJob(Job job, User user)
     {
-        usersJobs.put(user.GetID(), job);
+        if(job.IsRequest())
+        {
+            ScheduleJob(job, user);
+        }
+        else            
+        {
+            Log.WriteDebug("Received job results for job " + job.GetID());
+        }
+       
+    }
+    
+    private void ScheduleJob(Job job, User user)
+    {
+         usersJobs.put(user.GetID(), job);
         
         VirtualMachineWrapper vm = CreateNewVirtualMachine();
         machines.add(vm);
@@ -132,18 +149,18 @@ public class Scheduler implements JobScheduler {
     private VirtualMachineWrapper CreateNewVirtualMachine()
     {       
         VirtualMachineWrapper vm_wrapped = null;
-        Log.WriteDebug("Attempting to create a VM...");
-        String template = Template.Qcow();
-        OneResponse vmCreateResponse = VirtualMachine.allocate(myClient, template);
-        Log.WriteOneResponse(vmCreateResponse);
+        //Log.WriteDebug("Attempting to create a VM...");
+        //String template = Template.Qcow();
+        //OneResponse vmCreateResponse = VirtualMachine.allocate(myClient, template);
+        //Log.WriteOneResponse(vmCreateResponse);
         
-        if(!vmCreateResponse.isError())
-        {
-            Log.WriteInfo("Succesfully created VM with id " + vmCreateResponse.getMessage());
-            int vm_id = vmCreateResponse.getIntMessage();
+        //if(!vmCreateResponse.isError())
+        //{
+            //Log.WriteInfo("Succesfully created VM with id " + vmCreateResponse.getMessage());
+            int vm_id = 41016;//vmCreateResponse.getIntMessage();
             VirtualMachine vm = new VirtualMachine(vm_id, myClient);
             vm_wrapped = new VirtualMachineWrapper(vm);
-        }
+        //}
         
         return vm_wrapped;
     }
@@ -155,7 +172,7 @@ public class Scheduler implements JobScheduler {
         
         for(int i =0; i<machines.size(); i++)
         {
-           machines.get(i).Shutdown();
+           //machines.get(i).Shutdown();
         }
     }
 }
